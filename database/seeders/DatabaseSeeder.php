@@ -21,18 +21,16 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        $this->seedTask() ; 
-
-
+        $this->seedTask();
     }
 
 
     public function seedTask()
     {
         for ($i = 1; $i <= 100; $i++) {
-            Task::create([
+            $task = Task::create([
                 'title' => "title : " . $i,
-                'is_done' => false
+                'is_done' => $i % 5 == 0 ? true : false,
             ]);
         }
     }

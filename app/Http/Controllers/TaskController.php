@@ -13,7 +13,13 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return new TaskCollection(Task::paginate(8));
+        // Task::query()->delete();
+
+        $tasks = Task::latest();
+        if (request('is_done')) {
+            $tasks->where('is_done', 1);
+        }
+        return new TaskCollection($tasks->paginate(8));
     }
 
     public function show(Request $request, Task $task)
