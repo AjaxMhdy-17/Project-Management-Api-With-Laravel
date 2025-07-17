@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\TaskRequest;
 use App\Http\Requests\Api\TaskUpdateRequest;
 use App\Http\Resources\Api\TaskCollection;
@@ -40,13 +41,26 @@ class TaskController extends Controller
     {
 
         $data = $request->validated();
+        if ($request->user()->id != $task->user_id) {
+            return response()->json([
+                'msg' => "User Not Authorised!",
+            ]);
+        }
         $task->update($data);
         return new TaskResources($task);
     }
 
     public function destroy(Request $request, Task $task)
     {
+
+        if ($request->user()->id != $task->user_id) {
+            return response()->json([
+                'msg' => "User Not Authorised!",
+            ]);
+        }
         $task->delete();
-        return response()->json($task);
+        return response()->json([
+            "msg" => "Task Deleted Successfully!"
+        ]);
     }
 }
