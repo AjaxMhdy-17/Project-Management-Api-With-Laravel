@@ -13,8 +13,6 @@ class TaskController extends Controller
 {
     public function index()
     {
-        // Task::query()->delete();
-
         $tasks = Task::latest();
         if (request('is_done')) {
             $tasks->where('is_done', 1);
