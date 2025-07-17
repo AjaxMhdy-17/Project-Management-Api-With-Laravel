@@ -8,6 +8,7 @@ use App\Http\Resources\Api\TaskCollection;
 use App\Http\Resources\Api\TaskResources;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -29,7 +30,8 @@ class TaskController extends Controller
     {
 
         $data = $request->validated();
-        $task = Task::create($data);
+        // $task = Task::create($data);
+        $task = Auth::user()->tasks()->create($data);
         return new TaskResources($task);
     }
 

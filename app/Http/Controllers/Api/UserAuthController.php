@@ -66,8 +66,9 @@ class UserAuthController extends Controller
 
     public function loggedinUser(Request $request)
     {
-        $data['email'] = 'user2@gmail.com';
-        $user = User::where('email', $data['email'])->first();
-        return response()->json(['msg' => 'logged in user' , 'user' => $user]);
+        return response()->json([
+            'msg' => 'user loggedin successfully',
+            'user' => $request->user()
+        ]);
     }
 }
