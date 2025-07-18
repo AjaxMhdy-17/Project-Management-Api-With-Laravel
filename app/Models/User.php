@@ -57,4 +57,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class, 'user_id');
     }
+
+     public function memberShips()
+    {
+        return $this->belongsToMany(Project::class, Member::class);
+    }
+
 }

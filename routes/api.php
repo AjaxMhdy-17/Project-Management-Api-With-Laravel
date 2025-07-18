@@ -18,10 +18,8 @@ Route::get('user', [UserAuthController::class, 'index']);
 Route::post('user/register', [UserAuthController::class, 'register']);
 Route::post('user/login', [UserAuthController::class, 'login']);
 
-Route::apiResource('tasks', TaskController::class)->only('index');
+Route::apiResource('tasks', TaskController::class)->only(['index','show']);
 Route::apiResource('project', ProjectController::class)->only(['index','show']);
-
-// Route::apiResource('project', ProjectController::class)->only(['store', 'update', 'destroy']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user/loggedin', [UserAuthController::class, 'loggedinUser']);

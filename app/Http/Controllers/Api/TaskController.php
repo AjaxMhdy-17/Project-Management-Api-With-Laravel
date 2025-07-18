@@ -15,7 +15,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::latest();
+        $tasks = Task::with('project')->latest();
         if (request('is_done')) {
             $tasks->where('is_done', 1);
         }
@@ -24,14 +24,13 @@ class TaskController extends Controller
 
     public function show(Request $request, Task $task)
     {
+        $task->load('project');
         return new TaskResources($task);
     }
 
     public function store(TaskRequest $request)
     {
-
         $data = $request->validated();
-        // $task = Task::create($data);
         $task = Auth::user()->tasks()->create($data);
         return new TaskResources($task);
     }

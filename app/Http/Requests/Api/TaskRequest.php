@@ -22,7 +22,9 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string'
+            'title' => 'required|string',
+            'is_done' => 'required|boolean',
+            'project_id' => 'required'
         ];
     }
 }

@@ -7,28 +7,33 @@ use App\Http\Resources\Api\ProjectCollection;
 use App\Http\Resources\Api\ProjectResources;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
 
     public function index()
     {
-        return new ProjectCollection(Project::latest()->get());
+
+        $projects = Project::with('tasks')->get();
+        return new ProjectCollection($projects);
     }
 
     public function store(Request $request)
     {
         $data = $this->validateData($request);
 
-        // return response()->json($request->user());
+        $user_ids = json_decode($data['member_id'], true);
         $project = $request->user()->projects()->create($data);
+
+        for ($i = 0; $i < count($user_ids); $i++) {
+            $project->members()->attach($user_ids[$i]);
+        }
         return response()->json($project);
     }
 
     public function show(string $id)
     {
-        $project = Project::findOrFail($id);
+        $project = Project::with(['tasks', 'members'])->findOrFail($id);
         return new ProjectResources($project);
     }
 
@@ -36,7 +41,6 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $data = $this->validateData($request);
-
         if ($request->user()->id != $project->user_id) {
             return response()->json([
                 'msg' => "Something Went Wrong!"
@@ -44,6 +48,8 @@ class ProjectController extends Controller
         }
         $pro = Project::findOrFail($project->id);
         $pro->update($data);
+        $user_ids = json_decode($data['member_id'], true);
+        $pro->members()->sync($user_ids);
         return response()->json([
             'msg' => "Project Updated!"
         ]);
@@ -68,7 +74,8 @@ class ProjectController extends Controller
     public function validateData($request)
     {
         return $request->validate([
-            'title' => 'required|string'
+            'title' => 'required|string',
+            'member_id' => 'sometimes'
         ]);
     }
 }
